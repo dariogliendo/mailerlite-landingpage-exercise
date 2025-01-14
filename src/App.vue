@@ -5,7 +5,11 @@ import ContentConfig from "./components/ContentConfig.vue";
 import ContentDisplay from "./components/ContentDisplay.vue";
 import type { Content } from "./commons/types";
 
-const items = ref([{ type: "text" }, { type: "image" }]);
+interface ContentOption {
+  type: string;
+}
+
+const items: ContentOption[] = [{ type: "text" }, { type: "image" }];
 
 const content = ref<Content[]>([]);
 
@@ -23,7 +27,7 @@ const saveStatus = () => {
   localStorage.setItem("content", JSON.stringify(content.value));
 };
 
-const cloneContent = (cloned: any) => {
+const cloneContent = (cloned: ContentOption) => {
   return {
     type: cloned.type,
     id: Date.now(),
