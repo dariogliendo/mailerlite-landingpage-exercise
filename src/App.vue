@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue";
 import draggable from "vuedraggable";
 import ContentConfig from "./components/ContentConfig.vue";
 import ContentDisplay from "./components/ContentDisplay.vue";
+import Snackbar from "./components/Snackbar.vue";
 import type { Content } from "./commons/types";
 
 interface ContentOption {
@@ -12,6 +13,8 @@ interface ContentOption {
 const items: ContentOption[] = [{ type: "text" }, { type: "image" }];
 
 const content = ref<Content[]>([]);
+const snackMessage = ref<string>("");
+const snackColor = ref<string>("");
 
 onMounted(() => {
   const savedContent = localStorage.getItem("content");
@@ -25,6 +28,7 @@ onMounted(() => {
 
 const saveStatus = () => {
   localStorage.setItem("content", JSON.stringify(content.value));
+  showSnackbar("Content saved succesfully", "green");
 };
 
 const cloneContent = (cloned: ContentOption) => {
@@ -33,6 +37,11 @@ const cloneContent = (cloned: ContentOption) => {
     id: Date.now(),
     pendingConfiguration: true,
   };
+};
+
+const showSnackbar = (message: string, color: string) => {
+  snackMessage.value = message;
+  snackColor.value = color;
 };
 
 const cancelContentConfig = (id: number) => {
@@ -57,6 +66,7 @@ const updateConfig = (updated: Content) => {
 const clearContent = () => {
   content.value = [];
   localStorage.removeItem("content");
+  showSnackbar("Content cleared", "green");
 };
 
 const onChange = (event: any) => {
@@ -75,6 +85,7 @@ const onChange = (event: any) => {
 
 const remove = (id: number) => {
   content.value = content.value.filter((c) => c.id !== id);
+  showSnackbar("Content removed", "red");
 };
 
 const edit = (id: number) => {
@@ -132,7 +143,7 @@ const addElement = (type: string) => {
         </div>
         <div>
           <button
-            class="border border-gray-500 text-gray-500 py-2 px-4 rounded hover:bg-gray-700 bg-gray-900 hover:text-white transition w-full"
+            class="border border-green-600 text-white py-2 px-4 rounded hover:bg-green-600 bg-green-700 transition w-full"
             @click="saveStatus"
           >
             Save
@@ -169,4 +180,15 @@ const addElement = (type: string) => {
       Clear
     </button>
   </div>
+  <snackbar
+    :message="snackMessage"
+    :duration="3500"
+    :color="snackColor"
+    @finished="
+      () => {
+        snackMessage = '';
+        snackColor = '';
+      }
+    "
+  />
 </template>
