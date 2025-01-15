@@ -4,7 +4,7 @@ import draggable from "vuedraggable";
 import ContentConfig from "./components/ContentConfig.vue";
 import ContentDisplay from "./components/ContentDisplay.vue";
 import Snackbar from "./components/Snackbar.vue";
-import type { Content } from "./commons/types";
+import type { Content, DynamicColorOptions } from "./commons/types";
 
 interface ContentOption {
   type: string;
@@ -14,7 +14,7 @@ const items: ContentOption[] = [{ type: "text" }, { type: "image" }];
 
 const content = ref<Content[]>([]);
 const snackMessage = ref<string>("");
-const snackColor = ref<string>("");
+const snackColor = ref<DynamicColorOptions | undefined>();
 const snackUndo = ref<boolean | undefined>(false);
 const lastState = ref<Content[]>([]);
 
@@ -49,15 +49,19 @@ const cloneContent = (cloned: ContentOption) => {
   };
 };
 
-const showSnackbar = (message: string, color: string, undo?: boolean) => {
-  snackMessage.value = message;
+const showSnackbar = (
+  message: string,
+  color: DynamicColorOptions,
+  undo?: boolean
+) => {
   snackColor.value = color;
   snackUndo.value = undo;
+  snackMessage.value = message;
 };
 
 const resetSnackbar = () => {
   snackMessage.value = "";
-  snackColor.value = "";
+  snackColor.value = undefined;
   snackUndo.value = false;
 };
 
@@ -207,13 +211,13 @@ const undo = () => {
   </div>
   <snackbar
     :message="snackMessage"
-    :duration="3500"
+    :duration="45000"
     :color="snackColor"
     :undo="snackUndo"
     @finished="
       () => {
         snackMessage = '';
-        snackColor = '';
+        snackColor = undefined;
       }
     "
     @undo="undo()"

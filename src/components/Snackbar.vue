@@ -14,8 +14,8 @@
         :class="{
           'opacity-100 visible': visible,
           'opacity-0 invisible': !visible,
-          [`bg-${color}-700`]: color,
-          'bg-gray-700': !color,
+          'bg-green-700 hover:bg-green-600': props.color === 'green',
+          'bg-red-700 hover:bg-red-600': props.color === 'red',
         }"
       >
         <div class="flex flex-row gap-8 justify-between items-center">
@@ -40,15 +40,16 @@
 
 <script setup lang="ts">
 import { ref, toRefs, watch } from "vue";
+import type { DynamicColorOptions } from "../commons/types";
 
 const props = defineProps<{
   message: string;
   duration: number;
-  color?: string;
+  color?: DynamicColorOptions | undefined;
   undo?: boolean;
 }>();
 
-const { message, color } = toRefs(props);
+const { message } = toRefs(props);
 
 const visible = ref(false);
 let timeout: number | null = null;

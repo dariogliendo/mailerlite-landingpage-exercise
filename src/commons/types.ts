@@ -6,3 +6,5 @@ export interface Content {
   alt?: string; 
   pendingConfiguration: boolean
 }
+
+export type DynamicColorOptions = "green" | "red"
