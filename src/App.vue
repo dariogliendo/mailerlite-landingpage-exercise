@@ -133,7 +133,7 @@ const undo = () => {
     <div
       class="container gap-4 h-full flex md:flex-row flex-col-reverse overflow-hidden"
     >
-      <div class="h-full flex flex-col gap-4 flex-1 overflow-hidden">
+      <div class="h-full flex flex-col gap-4 flex-1 overflow-hidden relative">
         <h1 class="text-3xl flex-0">Page content</h1>
         <div
           class="border p-2 w-full h-full bg-gray-800 border-gray-500 rounded flex-1 overflow-auto"
@@ -168,10 +168,10 @@ const undo = () => {
         </div>
         <div>
           <button
-            class="border border-green-600 text-white py-2 px-4 rounded hover:bg-green-600 bg-green-700 transition w-full"
+            class="hover:bg-green-600 bg-green-700 transition w-12 h-12 rounded-full flex items-center justify-center absolute right-3 bottom-8"
             @click="saveStatus"
           >
-            Save
+            <i class="fa-solid fa-save"></i>
           </button>
         </div>
       </div>

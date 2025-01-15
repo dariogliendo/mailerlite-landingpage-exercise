@@ -1,31 +1,40 @@
 <template>
   <Teleport to="body">
-    <div
-      v-if="visible"
-      class="snackbar fixed bottom-0 left-1/2 transform -translate-x-1/2 text-white py-3 px-6 rounded-t-lg shadow-black shadow-md transition-opacity duration-300 ease-in-out z-20"
-      :class="{
-        'opacity-100 visible': visible,
-        'opacity-0 invisible': !visible,
-        [`bg-${color}-700`]: color,
-        'bg-gray-700': !color,
-      }"
+    <Transition
+      enter-active-class="transition-transform ease-out duration-500"
+      enter-from-class="translate-y-full"
+      enter-to-class="translate-y-0"
+      leave-active-class="transition-transform ease-in duration-500"
+      leave-from-class="translate-y-0"
+      leave-to-class="translate-y-full"
     >
-      <div class="flex flex-row gap-8 justify-center items-center">
-        <span>{{ message }}</span>
-        <button
-          v-if="props.undo"
-          class="text-white border-white border py-1 px-2 rounded hover:bg-white hover:text-black transition"
-          @click="
-            () => {
-              emit('undo');
-              visible = false;
-            }
-          "
-        >
-          Undo
-        </button>
+      <div
+        v-if="visible"
+        class="snackbar fixed bottom-0 left-1/2 transform duration-200 -translate-x-1/2 text-white py-3 px-6 rounded-t-lg shadow-black shadow-md z-20 min-w-80 md:w-auto"
+        :class="{
+          'opacity-100 visible': visible,
+          'opacity-0 invisible': !visible,
+          [`bg-${color}-700`]: color,
+          'bg-gray-700': !color,
+        }"
+      >
+        <div class="flex flex-row gap-8 justify-between items-center">
+          <span>{{ message }}</span>
+          <button
+            v-if="props.undo"
+            class="text-white border-white border py-1 px-2 rounded hover:bg-white hover:text-black Transition"
+            @click="
+              () => {
+                emit('undo');
+                visible = false;
+              }
+            "
+          >
+            Undo
+          </button>
+        </div>
       </div>
-    </div>
+    </Transition>
   </Teleport>
 </template>
 
