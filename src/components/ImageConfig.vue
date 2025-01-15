@@ -1,6 +1,7 @@
 <template>
-  <div class="image-config w-full bg-gray-700">
-    <div class="flex flex-row gap-4 p-4">
+  <div class="image-config w-full bg-gray-700 p-4 flex flex-col gap-4">
+    <h1 class="text-sm">Select an image</h1>
+    <div class="flex flex-row gap-4">
       <div
         v-for="image of options"
         class="flex-1 basis-1/4"

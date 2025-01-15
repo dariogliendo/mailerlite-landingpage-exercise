@@ -52,7 +52,6 @@ const updateConfig = (updated: Content) => {
     }
     return c;
   });
-  saveStatus();
 };
 
 const clearContent = () => {
@@ -72,17 +71,23 @@ const onChange = (event: any) => {
         }
       });
   }
-  saveStatus();
 };
 
 const remove = (id: number) => {
   content.value = content.value.filter((c) => c.id !== id);
-  saveStatus();
+};
+
+const edit = (id: number) => {
+  content.value = content.value.map((c) => {
+    if (c.id === id) {
+      return { ...c, pendingConfiguration: true };
+    }
+    return { ...c, pendingConfiguration: false };
+  });
 };
 
 const addElement = (type: string) => {
   content.value.push({ type, id: Date.now(), pendingConfiguration: true });
-  saveStatus();
 };
 </script>
 
@@ -117,13 +122,21 @@ const addElement = (type: string) => {
                 <div v-else>
                   <content-display
                     :config="element"
-                    @edit="element.pendingConfiguration = true"
+                    @edit="edit"
                     @remove="remove"
                   />
                 </div>
               </div>
             </template>
           </draggable>
+        </div>
+        <div>
+          <button
+            class="border border-gray-500 text-gray-500 py-2 px-4 rounded hover:bg-gray-700 bg-gray-900 hover:text-white transition w-full"
+            @click="saveStatus"
+          >
+            Save
+          </button>
         </div>
       </div>
       <div class="md:flex-1 flex-0 flex flex-col" ref="container">
