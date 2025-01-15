@@ -75,8 +75,14 @@ const onChange = (event: any) => {
   saveStatus();
 };
 
+const remove = (id: number) => {
+  content.value = content.value.filter((c) => c.id !== id);
+  saveStatus();
+};
+
 const addElement = (type: string) => {
   content.value.push({ type, id: Date.now(), pendingConfiguration: true });
+  saveStatus();
 };
 </script>
 
@@ -112,6 +118,7 @@ const addElement = (type: string) => {
                   <content-display
                     :config="element"
                     @edit="element.pendingConfiguration = true"
+                    @remove="remove"
                   />
                 </div>
               </div>
