@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import draggable from "vuedraggable";
 import ContentConfig from "./components/ContentConfig.vue";
 import ContentDisplay from "./components/ContentDisplay.vue";
@@ -15,6 +15,8 @@ const items: ContentOption[] = [{ type: "text" }, { type: "image" }];
 const content = ref<Content[]>([]);
 const snackMessage = ref<string>("");
 const snackColor = ref<string>("");
+const snackUndo = ref<boolean | undefined>(false);
+const lastState = ref<Content[]>([]);
 
 onMounted(() => {
   const savedContent = localStorage.getItem("content");
@@ -25,6 +27,14 @@ onMounted(() => {
       .map((c: Content) => ({ ...c, pendingConfiguration: false }));
   }
 });
+
+watch(
+  content,
+  (_, oldValue) => {
+    lastState.value = oldValue;
+  },
+  { deep: true }
+);
 
 const saveStatus = () => {
   localStorage.setItem("content", JSON.stringify(content.value));
@@ -39,9 +49,16 @@ const cloneContent = (cloned: ContentOption) => {
   };
 };
 
-const showSnackbar = (message: string, color: string) => {
+const showSnackbar = (message: string, color: string, undo?: boolean) => {
   snackMessage.value = message;
   snackColor.value = color;
+  snackUndo.value = undo;
+};
+
+const resetSnackbar = () => {
+  snackMessage.value = "";
+  snackColor.value = "";
+  snackUndo.value = false;
 };
 
 const cancelContentConfig = (id: number) => {
@@ -66,7 +83,7 @@ const updateConfig = (updated: Content) => {
 const clearContent = () => {
   content.value = [];
   localStorage.removeItem("content");
-  showSnackbar("Content cleared", "green");
+  showSnackbar("Content cleared", "green", true);
 };
 
 const onChange = (event: any) => {
@@ -85,7 +102,7 @@ const onChange = (event: any) => {
 
 const remove = (id: number) => {
   content.value = content.value.filter((c) => c.id !== id);
-  showSnackbar("Content removed", "red");
+  showSnackbar("Content removed", "red", true);
 };
 
 const edit = (id: number) => {
@@ -98,7 +115,15 @@ const edit = (id: number) => {
 };
 
 const addElement = (type: string) => {
-  content.value.push({ type, id: Date.now(), pendingConfiguration: true });
+  content.value = [
+    ...content.value,
+    { type, id: Date.now(), pendingConfiguration: true },
+  ];
+};
+
+const undo = () => {
+  content.value = lastState.value;
+  resetSnackbar();
 };
 </script>
 
@@ -184,11 +209,13 @@ const addElement = (type: string) => {
     :message="snackMessage"
     :duration="3500"
     :color="snackColor"
+    :undo="snackUndo"
     @finished="
       () => {
         snackMessage = '';
         snackColor = '';
       }
     "
+    @undo="undo()"
   />
 </template>

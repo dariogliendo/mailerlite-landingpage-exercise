@@ -7,10 +7,24 @@
         'opacity-100 visible': visible,
         'opacity-0 invisible': !visible,
         [`bg-${color}-700`]: color,
-        'bg-grey-700': !color,
+        'bg-gray-700': !color,
       }"
     >
-      {{ message }}
+      <div class="flex flex-row gap-8 justify-center items-center">
+        <span>{{ message }}</span>
+        <button
+          v-if="props.undo"
+          class="text-white border-white border py-1 px-2 rounded hover:bg-white hover:text-black transition"
+          @click="
+            () => {
+              emit('undo');
+              visible = false;
+            }
+          "
+        >
+          Undo
+        </button>
+      </div>
     </div>
   </Teleport>
 </template>
@@ -22,18 +36,24 @@ const props = defineProps<{
   message: string;
   duration: number;
   color?: string;
+  undo?: boolean;
 }>();
 
 const { message, color } = toRefs(props);
 
 const visible = ref(false);
+let timeout: number | null = null;
 
-const emit = defineEmits(["finished"]);
+const emit = defineEmits(["finished", "undo"]);
 
 watch(message, (newMessage) => {
+  if (timeout) {
+    clearTimeout(timeout);
+    visible.value = false;
+  }
   if (newMessage) {
     visible.value = true;
-    setTimeout(() => {
+    timeout = setTimeout(() => {
       visible.value = false;
       emit("finished", "");
     }, props.duration || 3000); // Duración predeterminada de 3 segundos
